@@ -8,9 +8,7 @@
     {
         public class WarehouseService
         {
-
             private static ApplicationDbContext dbContext = new ApplicationDbContext();
-
 
             public List<Warehouse> GetWarehouses()
             {
@@ -93,5 +91,4 @@
             }
         }
     }
-
 }

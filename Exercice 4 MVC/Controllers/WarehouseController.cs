@@ -1,5 +1,4 @@
 ﻿using BO;
-using Exercice_5_MVC.Models;
 using Exercice_5_MVC.Service.Exercice_4_MVC.Service;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,8 +6,7 @@ namespace Exercice_5_MVC.Controllers
 {
     public class WarehouseController : Controller
     {
-
-        WarehouseService warehouseService; 
+        private WarehouseService warehouseService; 
 
         public WarehouseController()
         {
@@ -138,8 +136,6 @@ namespace Exercice_5_MVC.Controllers
             {
                 return View();
             }
-        }
-
-  
+        }  
     }
 }
