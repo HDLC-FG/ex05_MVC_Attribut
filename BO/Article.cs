@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace BO
+﻿namespace BO
 {
     public class Article
     {

@@ -5,7 +5,7 @@ namespace Exercice_5_MVC
 {
     public class Mapping
     {
-       public static WarehouseVM  ConvertToWarehouseVM(Warehouse warehouse)
+        public static WarehouseVM ConvertToWarehouseVM(Warehouse warehouse)
         {
             var vm = new WarehouseVM();
             vm.Id = warehouse.Id;
