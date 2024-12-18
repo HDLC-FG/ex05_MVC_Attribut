@@ -1,6 +1,7 @@
 ﻿using Exercice_5_MVC.Service;
 using Exercice_5_MVC.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Exercice_5_MVC.Controllers
 {
@@ -41,6 +42,10 @@ namespace Exercice_5_MVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(OrderViewModel viewModel)
         {
+            if(articleSelectedViewModels.Count > 0)
+            {
+                ModelState["ListArticlesSelected"].ValidationState = ModelValidationState.Valid;
+            }
             if (!ModelState.IsValid)
             {
                 ViewData["OrderDetails"] = orderService.GetOrderDetails().Select(x => x.ToViewModel()).ToList();
@@ -52,11 +57,9 @@ namespace Exercice_5_MVC.Controllers
             viewModel.Id = orderService.GetOrders().Max(x => x.Id) + 1;
 
             var articles = orderService.GetArticles();
-
-            var listarticlesSelected = articleSelectedViewModels;
             
             var i = 1;
-            foreach (var articleSelected in listarticlesSelected)
+            foreach (var articleSelected in articleSelectedViewModels)
             {
                 var article = articles.Find(x => x.Id == articleSelected.Id)!;
                 if(article.StockQuantity > articleSelected.Qte)
