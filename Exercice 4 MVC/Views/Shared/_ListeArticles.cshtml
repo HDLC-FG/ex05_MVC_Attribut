@@ -1,0 +1,13 @@
+﻿@using Exercice_5_MVC.ViewModels
+@model IList<ArticleSelectedViewModel>
+
+@{
+	if (Model != null)
+	{
+		foreach (var item in Model)
+		{
+			<label class="control-label">@item.Name</label>
+			<input asp-for="@item.Name" class="form-control" readonly />
+		}
+	}	
+}

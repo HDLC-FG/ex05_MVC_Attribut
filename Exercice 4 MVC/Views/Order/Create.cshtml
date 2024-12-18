@@ -17,14 +17,14 @@
 	<div class="col-md-4">
 		<form asp-action="Create">
 			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-			<div class="form-group">
+			@* <div class="form-group">
 				<label asp-for="Id" class="control-label"></label>
 				<input asp-for="Id" class="form-control" />
 				<span asp-validation-for="Id" class="text-danger"></span>
-			</div>
+			</div> *@
 			<div class="form-group">
 				<label asp-for="CustomerName" class="control-label"></label>
-				<input asp-for="CustomerName" class="form-control" maxlength="120" />
+				<input asp-for="CustomerName" class="form-control" maxlength="100" />
 				<span asp-validation-for="CustomerName" class="text-danger"></span>
 			</div>
 			<div class="form-group">
@@ -34,7 +34,7 @@
 			</div>
 			<div class="form-group">
 				<label asp-for="ShippingAddress" class="control-label"></label>
-				<input asp-for="ShippingAddress" class="form-control" maxlength="220" />
+				<input asp-for="ShippingAddress" class="form-control" maxlength="200" />
 				<span asp-validation-for="ShippingAddress" class="text-danger"></span>
 			</div>
 			<div class="form-group">
@@ -59,28 +59,36 @@
 				<input asp-for="TotalAmount" class="form-control" id="idTotalAmount" readonly />
 				<span asp-validation-for="TotalAmount" class="text-danger"></span>
 			</div>
-			<div id="newOrderDetails">
-				<input asp-for="ListArticlesSelected" value="" id="ListOrderDetailSelected" type="hidden" />
+			<div class="form-group" id="ListArticlesSelectedView">
+				@{
+					await Html.RenderPartialAsync("_ListeArticles", ViewData["ArticlesSelected"]);
+				}
 			</div>
-			@if (orderDetails != null && articles != null)
-			{
-				<div class="row">
-					<label>Articles</label>
-					<div class="col-md-9">
-						<select asp-items="articleNames" class="form-select" id="ArticleSelected">
-							<option value="">Choose a article</option>
-						</select>
-						<label class="control-label">Quantity</label>
-						<input id="ArticleQteSelected" class="form-control" type="number" />
+			@{
+				if (orderDetails != null && articles != null)
+				{
+					<div class="row">
+						<label>Articles</label>
+						<div class="col-md-9">
+							<select asp-items="articleNames" class="form-select" id="ArticleSelected">
+								<option value="">Choose a article</option>
+							</select>
+							<label class="control-label">Quantity</label>
+							<input id="ArticleQteSelected" class="form-control" type="number" />
+						</div>
+						<div class="col-md-3">
+							<button type="button" id="addArticle" class="btn btn-primary w-100 h-100">Add</button>
+						</div>
+						<span id="ArticlesValidationMessage" class="text-danger"></span>
 					</div>
-					<div class="col-md-3">
-						<button type="button" id="addArticle" class="btn btn-primary w-100 h-100">Add</button>
-					</div>
-					<span id="ArticlesValidationMessage" class="text-danger"></span>
-				</div>
+				}
 			}
 			<div class="form-group">
-				<input type="submit" value="Create" class="btn btn-primary" />
+				<span asp-validation-for="ListArticlesSelected" class="text-danger"></span>
+			</div>
+			<br />
+			<div class="form-group">
+				<input type="submit" value="Create" class="btn btn-primary w-100" />
 			</div>
 		</form>
 	</div>
@@ -101,21 +109,28 @@
 			var articleSelectedText = $('#ArticleSelected').find(":selected").text();
 			var articleQteSelectedValue = document.getElementById('ArticleQteSelected').value;
 
-			if(articleSelectedValue && articleQteSelectedValue)
+			if(articleSelectedValue && articleQteSelectedValue && articleQteSelectedValue > 0)
 			{
+				$.ajax({
+					url: '/Order/CreateArticle', // L'URL de l'action du contrôleur qui va recevoir la valeur
+					type: 'POST',
+					data: {
+						articleSelected: {
+							Id: articleSelectedValue,
+							Name: articleSelectedText,
+							Qte: articleQteSelectedValue
+						}
+					},
+					success: function (response) {
+						$('#ListArticlesSelectedView').html(response);
+					},
+					error: function () {
+						console.log("Erreur lors de la mise à jour de l'article");
+					}
+				});
+
 				document.getElementById("ArticlesValidationMessage").textContent = "";
-
-				var json = JSON.stringify({Id: articleSelectedValue, Qte: articleQteSelectedValue});
-				document.getElementById("ListOrderDetailSelected").value += "," + json;
-
-				// Create new label + input for selected article
-				var newField = $('<div class="form-group">' +
-									'<label>Article ' + fieldCount + '</label>' +
-									'<input type="text" value="' + articleSelectedText + '" class="form-control" disabled />' +
-								  '</div>');
-
 				document.getElementById("idTotalAmount").value = parseInt(document.getElementById("idTotalAmount").value) + parseInt(articleQteSelectedValue);
-				$('#newOrderDetails').append(newField);
 			}
 			else
 			{

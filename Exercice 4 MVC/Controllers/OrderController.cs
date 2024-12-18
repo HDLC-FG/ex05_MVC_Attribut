@@ -1,13 +1,13 @@
 ﻿using Exercice_5_MVC.Service;
 using Exercice_5_MVC.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace Exercice_5_MVC.Controllers
 {
     public class OrderController : Controller
     {
         private OrderService orderService;
+        private static List<ArticleSelectedViewModel> articleSelectedViewModels = new List<ArticleSelectedViewModel>();
 
         public OrderController()
         {
@@ -31,11 +31,13 @@ namespace Exercice_5_MVC.Controllers
         {
             ViewData["OrderDetails"] = orderService.GetOrderDetails().Select(x => x.ToViewModel()).ToList();
             ViewData["Articles"] = orderService.GetArticles().Select(x => x.ToViewModel()).ToList();
+            ViewData["ArticlesSelected"] = articleSelectedViewModels;
             return View(new OrderViewModel());
         }
 
         // POST: OrderController/Create
         [HttpPost]
+        [ActionName("Create")]
         [ValidateAntiForgeryToken]
         public ActionResult Create(OrderViewModel viewModel)
         {
@@ -43,13 +45,16 @@ namespace Exercice_5_MVC.Controllers
             {
                 ViewData["OrderDetails"] = orderService.GetOrderDetails().Select(x => x.ToViewModel()).ToList();
                 ViewData["Articles"] = orderService.GetArticles().Select(x => x.ToViewModel()).ToList();
-                return View(new OrderViewModel());
+                ViewData["ArticlesSelected"] = articleSelectedViewModels;
+                return View(viewModel);
             }
 
-            var articles = orderService.GetArticles();
-            
-            var listarticlesSelected = JsonConvert.DeserializeObject<List<ArticleView>>("[" + viewModel.ListArticlesSelected.Substring(1) + "]");
+            viewModel.Id = orderService.GetOrders().Max(x => x.Id) + 1;
 
+            var articles = orderService.GetArticles();
+
+            var listarticlesSelected = articleSelectedViewModels;
+            
             var i = 1;
             foreach (var articleSelected in listarticlesSelected)
             {
@@ -80,6 +85,15 @@ namespace Exercice_5_MVC.Controllers
             {
                 return View();
             }
+        }
+
+        [HttpPost]
+        [ActionName("CreateArticle")]
+        public IActionResult Create(ArticleSelectedViewModel articleSelected)
+        {
+            articleSelectedViewModels.Add(articleSelected);
+            ViewData["ArticlesSelected"] = articleSelectedViewModels;
+            return PartialView("_ListeArticles", articleSelectedViewModels);
         }
 
         // GET: OrderController/Edit/5
@@ -131,11 +145,5 @@ namespace Exercice_5_MVC.Controllers
                 return View();
             }
         }
-    }
-
-    internal class ArticleView
-    {
-        public int Id { get; set; }
-        public int Qte { get; set; }
     }
 }

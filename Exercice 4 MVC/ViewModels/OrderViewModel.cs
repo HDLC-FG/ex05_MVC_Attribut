@@ -6,7 +6,6 @@ namespace Exercice_5_MVC.ViewModels
 {
     public class OrderViewModel
     {
-        [Required]
         public int? Id { get; set; }
 
         [Required]
@@ -39,8 +38,10 @@ namespace Exercice_5_MVC.ViewModels
         public string OrderStatus { get; set; } = string.Empty;
 
         //[Required]
-        public string ArticleSelected { get; set; } = string.Empty;
-        public string ListArticlesSelected { get; set; } = string.Empty;
+        //public string ArticleSelected { get; set; } = string.Empty;
+
+        [ValidateListArticlesSelected(1, ErrorMessage = "At leat one article is required.")]
+        public List<ArticleSelectedViewModel>? ListArticlesSelected { get; set; }
         public List<OrderDetailViewModel> OrderDetails { get; set; } = new List<OrderDetailViewModel>();
         public int WarehouseId { get; internal set; }
 
