@@ -13,7 +13,7 @@ namespace Exercice_5_MVC.ValidateAttribute
             var amount = (double)value!;
             if (amount <= 0)
             {
-                return new ValidationResult("Total amount must be greater then 0.");
+                return new ValidationResult(ErrorMessage);
             }
 
             return ValidationResult.Success;

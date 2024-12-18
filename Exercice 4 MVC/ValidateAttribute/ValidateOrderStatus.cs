@@ -17,7 +17,7 @@ namespace BO
 
             if (!isParsed || (isParsed && !Enum.IsDefined(typeof(OrderStatus), result!)))
             {
-                return new ValidationResult("Order status must to be : Passed, InProgress, Shipped or Delivered");
+                return new ValidationResult(ErrorMessage);
             }
 
             return ValidationResult.Success;

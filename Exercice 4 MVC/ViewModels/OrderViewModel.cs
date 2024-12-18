@@ -29,12 +29,12 @@ namespace Exercice_5_MVC.ViewModels
 
         [Required]
         [Display(Name = "Total amount")]
-        [ValidateTotalAmount]
+        [ValidateTotalAmount(ErrorMessage = "Total amount must be greater then 0.")]
         public double? TotalAmount { get; set; } = 0;
 
         [Required]
         [Display(Name = "Order status")]
-        [ValidateOrderStatus]
+        [ValidateOrderStatus(ErrorMessage = "Order status must to be : Passed, InProgress, Shipped or Delivered")]
         public string OrderStatus { get; set; } = string.Empty;
 
         //[Required]
