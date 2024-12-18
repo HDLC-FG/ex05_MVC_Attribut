@@ -83,14 +83,14 @@
             },
             new()
             {
-                OrderId =1,
+                OrderId = 1,
                 ArticleId = 2,
                 Quantity = 1,
                 UnitPrice = 800.00m
             },
             new()
             {
-                OrderId =2,
+                OrderId = 2,
                 ArticleId = 3,
                 Quantity = 1,
                 UnitPrice = 800.00m
