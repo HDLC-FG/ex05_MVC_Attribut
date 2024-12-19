@@ -4,19 +4,6 @@ namespace Exercice_5_MVC.ViewModels
 {
     public class ArticleViewModel
     {
-        public ArticleViewModel()
-        {
-        }
-
-        public ArticleViewModel(int id, string name, string description, decimal price, int stockQuantity)
-        {
-            Id = id;
-            Name = name;
-            Description = description;
-            Price = price;
-            StockQuantity = stockQuantity;
-        }
-
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }

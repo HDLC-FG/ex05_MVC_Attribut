@@ -2,6 +2,9 @@
 using Exercice_5_MVC.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace Exercice_5_MVC.Controllers
 {
@@ -94,9 +97,14 @@ namespace Exercice_5_MVC.Controllers
         [ActionName("CreateArticle")]
         public IActionResult Create(ArticleSelectedViewModel articleSelected)
         {
+            articleSelected.Price = orderService.GetArticles().Find(x => x.Id == articleSelected.Id).Price;
             articleSelectedViewModels.Add(articleSelected);
             ViewData["ArticlesSelected"] = articleSelectedViewModels;
-            return PartialView("_ListeArticles", articleSelectedViewModels);
+            return Json(new
+            {
+                TotalAmount = articleSelectedViewModels.Sum(x => x.Price * x.Qte),
+                PartialView = RenderViewToString("_ListeArticles.cshtml", articleSelectedViewModels)
+            });
         }
 
         // GET: OrderController/Edit/5
@@ -147,6 +155,38 @@ namespace Exercice_5_MVC.Controllers
             {
                 return View();
             }
+        }
+
+        private string RenderViewToString(string viewName, object model)
+        {
+            var controllerContext = ControllerContext;
+            var viewEngine = controllerContext.HttpContext.RequestServices.GetRequiredService<IRazorViewEngine>();
+            var tempDataProvider = controllerContext.HttpContext.RequestServices.GetRequiredService<ITempDataProvider>();
+
+            // Obtient l'action et la vue à partir du moteur de vues Razor
+            var viewResult = viewEngine.GetView("Views/Shared/", viewName, false);
+            if (!viewResult.Success)
+            {
+                throw new InvalidOperationException($"View {viewName} not found.");
+            }
+
+            // Crée un StringWriter pour capter le contenu HTML rendu
+            var stringWriter = new StringWriter();
+
+            var viewContext = new ViewContext(
+                controllerContext,
+                viewResult.View,
+                new ViewDataDictionary(new EmptyModelMetadataProvider(), controllerContext.ModelState) { Model = model },
+                new TempDataDictionary(controllerContext.HttpContext, tempDataProvider),
+                stringWriter,
+                new HtmlHelperOptions()
+            );
+            
+            // Rendre la vue en HTML dans le StringWriter
+            viewResult.View.RenderAsync(viewContext).GetAwaiter().GetResult();
+
+            // Retourner le contenu HTML généré sous forme de chaîne
+            return stringWriter.ToString();
         }
     }
 }

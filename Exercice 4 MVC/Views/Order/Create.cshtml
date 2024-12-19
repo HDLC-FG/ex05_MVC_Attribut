@@ -17,11 +17,6 @@
 	<div class="col-md-4">
 		<form asp-action="Create">
 			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-			@* <div class="form-group">
-				<label asp-for="Id" class="control-label"></label>
-				<input asp-for="Id" class="form-control" />
-				<span asp-validation-for="Id" class="text-danger"></span>
-			</div> *@
 			<div class="form-group">
 				<label asp-for="CustomerName" class="control-label"></label>
 				<input asp-for="CustomerName" class="form-control" maxlength="100" />
@@ -112,25 +107,27 @@
 			if(articleSelectedValue && articleQteSelectedValue && articleQteSelectedValue > 0)
 			{
 				$.ajax({
-					url: '/Order/CreateArticle', // L'URL de l'action du contrôleur qui va recevoir la valeur
+					url: '/Order/CreateArticle', // controller action
 					type: 'POST',
 					data: {
 						articleSelected: {
 							Id: articleSelectedValue,
 							Name: articleSelectedText,
-							Qte: articleQteSelectedValue
+							Qte: articleQteSelectedValue,
+							Price: null
 						}
 					},
 					success: function (response) {
-						$('#ListArticlesSelectedView').html(response);
+						console.log("CreateArticle success");
+						document.getElementById("idTotalAmount").value = parseInt(document.getElementById("idTotalAmount").value) + parseInt(response.totalAmount);
+						$('#ListArticlesSelectedView').html(response.partialView);
 					},
 					error: function () {
-						console.log("Erreur lors de la mise à jour de l'article");
+						console.log("CreateArticle error");
 					}
 				});
-
+				
 				document.getElementById("ArticlesValidationMessage").textContent = "";
-				document.getElementById("idTotalAmount").value = parseInt(document.getElementById("idTotalAmount").value) + parseInt(articleQteSelectedValue);
 			}
 			else
 			{
