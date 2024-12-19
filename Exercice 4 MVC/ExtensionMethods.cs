@@ -1,5 +1,6 @@
 ﻿using BO;
 using Exercice_5_MVC.ViewModels;
+using static BO.Enums;
 
 namespace Exercice_5_MVC
 {
@@ -17,7 +18,7 @@ namespace Exercice_5_MVC
                 ShippingAddress = order.ShippingAddress,
                 OrderDate = order.OrderDate,
                 TotalAmount = order.TotalAmount,
-                OrderStatus = order.OrderStatus,
+                OrderStatus = Enum.Parse<OrderStatus>(order.OrderStatus),
                 OrderDetails = order.OrderDetails.Select(x => x.ToViewModel()).ToList()
             };
         }

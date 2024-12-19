@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using BO;
 using Exercice_5_MVC.ValidateAttribute;
+using static BO.Enums;
 
 namespace Exercice_5_MVC.ViewModels
 {
@@ -35,7 +36,7 @@ namespace Exercice_5_MVC.ViewModels
         [Required]
         [Display(Name = "Order status")]
         [ValidateOrderStatus(ErrorMessage = "Order status must to be : Passed, InProgress, Shipped or Delivered")]
-        public string OrderStatus { get; set; } = string.Empty;
+        public OrderStatus? OrderStatus { get; set; }
 
         //[Required]
         //public string ArticleSelected { get; set; } = string.Empty;
@@ -55,7 +56,7 @@ namespace Exercice_5_MVC.ViewModels
                 ShippingAddress = ShippingAddress,
                 OrderDate = OrderDate!.Value,
                 TotalAmount = TotalAmount!.Value,
-                OrderStatus = OrderStatus,
+                OrderStatus = OrderStatus.Value.ToString(),
                 OrderDetails = OrderDetails.Select(x => x.ToModel()).ToList()
             };
         }

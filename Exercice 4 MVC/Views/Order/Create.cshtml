@@ -72,7 +72,7 @@
 							<input id="ArticleQteSelected" class="form-control" type="number" />
 						</div>
 						<div class="col-md-3">
-							<button type="button" id="addArticle" class="btn btn-primary w-100 h-100">Add</button>
+							<button type="button" id="AddArticle" class="btn btn-primary w-100 h-100">Add</button>
 						</div>
 						<span id="ArticlesValidationMessage" class="text-danger"></span>
 					</div>
@@ -93,46 +93,4 @@
 	<a asp-action="Index">Back to List</a>
 </div>
 
-<script>
-	$(document).ready(function () {
-		var fieldCount = 0;
-
-		$('#addArticle').click(function () {
-			fieldCount++;
-
-			var articleSelectedValue = $('#ArticleSelected').find(":selected").val();
-			var articleSelectedText = $('#ArticleSelected').find(":selected").text();
-			var articleQteSelectedValue = document.getElementById('ArticleQteSelected').value;
-
-			if(articleSelectedValue && articleQteSelectedValue && articleQteSelectedValue > 0)
-			{
-				$.ajax({
-					url: '/Order/CreateArticle', // controller action
-					type: 'POST',
-					data: {
-						articleSelected: {
-							Id: articleSelectedValue,
-							Name: articleSelectedText,
-							Qte: articleQteSelectedValue,
-							Price: null
-						}
-					},
-					success: function (response) {
-						console.log("CreateArticle success");
-						document.getElementById("idTotalAmount").value = parseInt(document.getElementById("idTotalAmount").value) + parseInt(response.totalAmount);
-						$('#ListArticlesSelectedView').html(response.partialView);
-					},
-					error: function () {
-						console.log("CreateArticle error");
-					}
-				});
-				
-				document.getElementById("ArticlesValidationMessage").textContent = "";
-			}
-			else
-			{
-				document.getElementById("ArticlesValidationMessage").textContent = "An article and quantity greater than 0 is required.";
-			}
-		});
-	});
-</script>
+<script src="~/js/Create.js"></script>

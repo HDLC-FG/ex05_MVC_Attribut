@@ -6,8 +6,25 @@
 	{
 		foreach (var item in Model)
 		{
-			<label class="control-label">@item.Name</label>
-			<input asp-for="@item.Name" class="form-control" readonly />
+			<br />
+			<div class="row">
+				<div class="col-md-9">
+					<div class="row">
+						<div class="col-md-7">
+							<label class="control-label">@item.Name</label>
+						</div>
+						<div class="col-md-2">
+							<label class="control-label">Qty</label>
+						</div>
+						<div class="col-md-3">
+							<input asp-for="@item.Qte" class="form-control" readonly />
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<button type="button" data-id="@item.Id" data-qte="@item.Qte" class="delete-btn btn btn-danger w-100">Delete</button>
+				</div>
+			</div>
 		}
 	}
 }

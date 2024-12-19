@@ -57,7 +57,7 @@
                 ShippingAddress = "123 Main Street",
                 OrderDate = DateTime.Now,
                 TotalAmount = 2000.00,
-                OrderStatus = "Processing"
+                OrderStatus = "InProgress"
             },
             new Order
             {
@@ -68,7 +68,7 @@
                 ShippingAddress = "One Microsoft Way",
                 OrderDate = DateTime.Now,
                 TotalAmount = 2000.00,
-                OrderStatus = "Processing"
+                OrderStatus = "InProgress"
             }
         };
 

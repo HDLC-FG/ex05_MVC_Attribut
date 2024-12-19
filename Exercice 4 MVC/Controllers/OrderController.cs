@@ -65,7 +65,7 @@ namespace Exercice_5_MVC.Controllers
             foreach (var articleSelected in articleSelectedViewModels)
             {
                 var article = articles.Find(x => x.Id == articleSelected.Id)!;
-                if(article.StockQuantity > articleSelected.Qte)
+                if(article.StockQuantity >= articleSelected.Qte)
                 {
                     viewModel.OrderDetails.Add(new OrderDetailViewModel
                     {
@@ -94,12 +94,34 @@ namespace Exercice_5_MVC.Controllers
         }
 
         [HttpPost]
-        [ActionName("CreateArticle")]
-        public IActionResult Create(ArticleSelectedViewModel articleSelected)
+        public IActionResult CreateArticle(ArticleSelectedViewModel articleSelected)
         {
-            articleSelected.Price = orderService.GetArticles().Find(x => x.Id == articleSelected.Id).Price;
-            articleSelectedViewModels.Add(articleSelected);
+            var article = orderService.GetArticles().Find(x => x.Id == articleSelected.Id);
+            var success = false;
+            if (article?.StockQuantity >= articleSelected.Qte)
+            {
+                articleSelected.Price = article.Price;
+                articleSelectedViewModels.Add(articleSelected);
+                success = true;
+
+                orderService.AddArticleQuantity(articleSelected.Id, -articleSelected.Qte);
+            }
+
             ViewData["ArticlesSelected"] = articleSelectedViewModels;
+            return Json(new
+            {
+                Success = success,
+                TotalAmount = articleSelectedViewModels.Sum(x => x.Price * x.Qte),
+                PartialView = RenderViewToString("_ListeArticles.cshtml", articleSelectedViewModels)
+            });
+        }
+
+        [HttpPost]
+        public IActionResult DeleteArticle(int Id, int Qte)
+        {
+            orderService.AddArticleQuantity(Id, Qte);
+            var articleToRemove = articleSelectedViewModels.Find(x => x.Id == Id);
+            articleSelectedViewModels.Remove(articleToRemove);
             return Json(new
             {
                 TotalAmount = articleSelectedViewModels.Sum(x => x.Price * x.Qte),
